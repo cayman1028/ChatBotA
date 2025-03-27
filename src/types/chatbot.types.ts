@@ -2,22 +2,30 @@ export interface Question {
   id: string;
   text: string;
   options: Option[];
+  answers: {
+    [key: string]: string;
+  };
 }
 
 export interface Option {
   id: string;
   text: string;
-  answer: string;
-  nextQuestionId?: string;
+  nextQuestionId: string | null;
 }
 
-export interface ChatHistory {
-  questionId: string;
-  selectedOptionId: string;
-  timestamp: number;
+export interface ChatbotProps {
+  initialQuestions: Question[];
+}
+
+export interface ChatMessage {
+  type: 'question' | 'answer';
+  text: string;
+  timestamp: Date;
 }
 
 export interface ChatbotState {
-  currentQuestionId: string | null;
-  history: ChatHistory[];
+  isOpen: boolean;
+  currentQuestion: Question | null;
+  messages: ChatMessage[];
+  isLoading: boolean;
 } 
