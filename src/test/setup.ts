@@ -1,12 +1,31 @@
-import '@testing-library/jest-dom';
-import * as matchers from '@testing-library/jest-dom/matchers';
-import { cleanup } from '@testing-library/react';
-import { afterEach, expect } from 'vitest';
+import "@testing-library/jest-dom"
+import { jest } from "@jest/globals"
 
-// Vitestのexpectにjest-domのマッチャーを追加
-expect.extend(matchers);
+// グローバルなモックやセットアップをここに追加
+// ResizeObserverのモック
+class ResizeObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
 
-// 各テスト後にクリーンアップを実行
-afterEach(() => {
-  cleanup();
-}); 
+// ResizeObserverがまだ定義されていない場合のみ定義
+if (typeof window !== "undefined" && !window.ResizeObserver) {
+  window.ResizeObserver = ResizeObserverMock
+}
+
+// matchMediaのモック
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: jest.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+})
+
